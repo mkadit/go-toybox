@@ -1,0 +1,8 @@
+frontend
+build
+.vscode
+.idea
+logs
+*.exe
+coverage.out
+data

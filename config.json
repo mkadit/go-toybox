@@ -1,0 +1,24 @@
+{
+  "db": {
+    "host": "127.0.0.1",
+    "user": "postgres",
+    "password": "SuiseiKawaii",
+    "database": "go-play"
+  },
+  "auth": {
+    "jwtSecret": "SuichanKyouMoKawaii"
+  },
+  "server": {
+    "corsAllowOrigin": "http://localhost:5173,http://localhost:3000,http://localhost:8000",
+    "port": 8000
+  },
+  "rpc": {
+    "port": 1234
+  },
+  "email": {
+    "address": "sender@email.com",
+    "password": "appPassword",
+    "server": "smtp.email.server",
+    "port": 587
+  }
+}

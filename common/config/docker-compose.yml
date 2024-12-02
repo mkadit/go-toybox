@@ -1,0 +1,27 @@
+services:
+  db:
+    container_name: go-toybox-db
+    image: postgres:15.4-alpine3.18
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    # restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SuiseiKawaii}
+      POSTGRES_DB: ${DB_NAME:-go-play}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+  # cache:
+  #   container_name: go-toybox-redis
+  #   image: redis:7.2.3-alpine
+  #   ports:
+  #     - "${REDIS_PORT}:6379"
+  #   command: "redis-server --loglevel warning --requirepass ${REDIS_PASSWORD} --protected-mode no"
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data

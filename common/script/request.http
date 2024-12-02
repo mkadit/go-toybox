@@ -1,0 +1,61 @@
+@URL=localhost
+@PORT=8000
+@AUTHORIZATION=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFeHBpcmVzQXQiOjE3MjMxODQ3MTksImlzcyI6IlNQS0xVIFBlcnRhbWluYSIsInJldHJ5IjoxMCwidXNlcklkIjoxfQ.TPvlU50GvzGYyv4gc1-SrFXdHSHgssUPLh2MWuFotAE
+###
+GET http://{{URL}}:{{PORT}}/api/test
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+
+
+###
+# @name post
+POST https://httpbin.org/post
+Content-Type: application/json
+
+{
+  "id": 999,
+  "value": "content"
+}
+
+
+
+###
+@auth = {{post.response.headers.X-Amzn-Trace-Id}}
+
+GET http://{{URL}}:{{PORT}}/api/test
+Content-Type: application/json
+Accept: application/json
+Authorization: {{auth}}
+
+< {%
+    request.variables.set("hash", "SUISEI")
+%}
+
+#@lang=lua
+> {%
+local json = vim.json.decode(response.body)
+json.data = "x"
+response.body = vim.json.encode(json)
+%}
+
+###
+< {%
+    const signature = crypto.hmac.sha256()
+        .withTextSecret(request.environment.get("secret")) // get variable from http-client.private.env.json
+        .updateWithText(request.body.tryGetSubstituted())
+        .digest().toHex();
+    request.variables.set("signature", signature)
+
+    const hash = crypto.sha256()
+        .updateWithText(request.body.tryGetSubstituted())
+        .digest().toHex();
+    request.variables.set("hash", hash)
+%}
+%
+POST https://httpbin.org/post
+X-My-Signature: {{signature}}
+X-My-Hash: {{hash}}
+Content-Type: application/json
